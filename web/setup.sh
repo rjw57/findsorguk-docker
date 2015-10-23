@@ -22,5 +22,5 @@ ensure_dir "${ROOT}/cache"
 
 a2ensite findsorguk
 a2dissite 000-default
-a2enmod rewrite headers expires php5 
+a2enmod rewrite headers expires php5
 
