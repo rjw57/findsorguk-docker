@@ -11,8 +11,8 @@ to be removed/rebuilt without affecting the database.
 ## Quick setup
 
 These instructions assume that a recent checkout of the findsorguk repository is
-at ``$FINDS_ORG_UK_REPO`` and that you have a working
-[docker](https://docker.com/) install.
+at ``$FINDS_ORG_UK_REPO``, this image's source repository is at ``$REPO``
+and that you have a working [docker](https://docker.com/) install.
 
 ```
 # Get docker images
@@ -28,7 +28,7 @@ docker exec -i db mysql -v dbname <${FINDS_ORG_UK_REPO}/sql/database.sql
 docker exec -i db mysql -v dbname <${FINDS_ORG_UK_REPO}/sql/populateTables.sql
 
 # Creates an initial user with login/password = admin/l3tm31n
-docker exec -i db mysql -v dbname < web/adminUser.sql
+docker exec -i db mysql -v dbname <${REPO}/adminUser.sql
 
 # Start the website container
 docker run -P --name web -d rjw57/findsorguk:latest
@@ -38,4 +38,16 @@ Use ``docker ps`` to discover which port the web server is running on. There
 should be a record of the form ``0.0.0.0:XXXX->80/tcp`` where ``XXXX`` is the
 port number. Open http://localhosy:XXXX in your web browser and log in as the
 admin user.
+
+## Development
+
+If you want to start development on the server you can launch a shell:
+
+```
+docker exec -it web /bin/bash
+```
+
+``git`` is installed inside the container and the source is at
+``/var/www/findsorguk``. You can use ``git format-patch`` to export your changes
+as patches which can be applied outside of the container.
 
