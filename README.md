@@ -23,7 +23,7 @@ docker pull rjw57/findsorguk:latest
 docker run --name db -d -e 'DB_USER=dbuser' -e 'DB_PASS=dbpass' \
 	-e 'DB_NAME=dbname' sameersbn/mysql:latest
 
-# Initialise the datavase
+# Initialise the database
 docker exec -i db mysql -v dbname <${FINDS_ORG_UK_REPO}/sql/database.sql
 docker exec -i db mysql -v dbname <${FINDS_ORG_UK_REPO}/sql/populateTables.sql
 
