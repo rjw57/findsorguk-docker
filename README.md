@@ -1,20 +1,41 @@
+# Docker images for Portable Antiquities Scheme
+
+This repository houses Dockerfiles for images useful for getting a development
+environment up for working on the Portable Antiquities Scheme database code.
+(The live version of this code is currently running at https://finds.org.uk/.)
+
+The images use Docker's orchestration support to allow the database to live in a
+separate container from the web frontend. This allows the web frontend container
+to be removed/rebuilt without affecting the database.
+
 ## Quick setup
 
-This assumes that a recent checkout of the findsorguk repository is at
-``../findsorguk``.
+These instructions assume that a recent checkout of the findsorguk repository is
+at ``$FINDS_ORG_UK_REPO`` and that you have a working
+[docker](https://docker.com/) install.
 
 ```
-docker run --name db -d -e 'DB_USER=dbuser' -e 'DB_PASS=dbpass' -e 'DB_NAME=dbname' sameersbn/mysql:latest
-docker exec -i db mysql -v dbname < ../findsorguk/sql/database.sql
-docker exec -i db mysql -v dbname < ../findsorguk/sql/populateTables.sql
-docker run -P --name web -d findsorguk/web
-```
+# Get docker images
+docker pull sameersbn/mysql:latest
+docker pull rjw57/findsorguk:latest
 
-Create the admin user (password is "l3tm31n").
+# Start the database container
+docker run --name db -d -e 'DB_USER=dbuser' -e 'DB_PASS=dbpass' \
+	-e 'DB_NAME=dbname' sameersbn/mysql:latest
 
-```
+# Initialise the datavase
+docker exec -i db mysql -v dbname <${FINDS_ORG_UK_REPO}/sql/database.sql
+docker exec -i db mysql -v dbname <${FINDS_ORG_UK_REPO}/sql/populateTables.sql
+
+# Creates an initial user with login/password = admin/l3tm31n
 docker exec -i db mysql -v dbname < web/adminUser.sql
+
+# Start the website container
+docker run -P --name web -d rjw57/findsorguk:latest
 ```
 
-Use ``docker ps`` to discover which port web server is running on.
+Use ``docker ps`` to discover which port the web server is running on. There
+should be a record of the form ``0.0.0.0:XXXX->80/tcp`` where ``XXXX`` is the
+port number. Open http://localhosy:XXXX in your web browser and log in as the
+admin user.
 
